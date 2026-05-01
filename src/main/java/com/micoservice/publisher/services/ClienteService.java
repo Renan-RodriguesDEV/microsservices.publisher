@@ -2,6 +2,7 @@ package com.micoservice.publisher.services;
 
 import java.util.List;
 
+import com.micoservice.publisher.dto.ClienteDTO;
 import org.springframework.stereotype.Service;
 
 import com.micoservice.publisher.model.Cliente;
@@ -23,16 +24,17 @@ public class ClienteService {
         return clienteReporitory.findById(id).orElse(null);
     }
 
-    public Cliente create(Cliente cliente) {
-        return clienteReporitory.save(cliente);
+    public Cliente create(ClienteDTO cliente) {
+        return clienteReporitory.save(new Cliente(cliente.name()));
     }
 
-    public Cliente update(Long id, Cliente cliente) {
-        Cliente cliente_exists = this.findById(id);
-        if (cliente != null) {
-            cliente_exists.setName(cliente.getName());
+    public Cliente update(Long id, ClienteDTO cliente) {
+        Cliente clienteDB = this.findById(id);
+        if (clienteDB == null) {
+            return null;
         }
-        return clienteReporitory.save(cliente);
+        clienteDB.setName(cliente.name());
+        return clienteReporitory.save(clienteDB);
     }
 
     public void deleteById(Long id) {

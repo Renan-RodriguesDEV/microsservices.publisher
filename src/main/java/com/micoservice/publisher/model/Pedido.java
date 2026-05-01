@@ -1,14 +1,8 @@
 package com.micoservice.publisher.model;
 
-import java.time.LocalDate;
+import jakarta.persistence.*;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import java.time.LocalDate;
 
 @Entity
 public class Pedido {
@@ -40,6 +34,10 @@ public class Pedido {
 
     public Pedido(String descricao) {
         this.descricao = descricao;
+    }
+    public Pedido(String descricao,Cliente cliente) {
+        this.descricao = descricao;
+        this.cliente = cliente;
     }
 
     public Long getId() {
@@ -80,5 +78,19 @@ public class Pedido {
 
     public void setUpdated_at(LocalDate updated_at) {
         this.updated_at = updated_at;
+    }
+
+    @PrePersist
+    private void prePersist() {
+        if (this.created_at == null) {
+            this.created_at = LocalDate.now();
+        }
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        if (this.updated_at == null) {
+            this.updated_at = LocalDate.now();
+        }
     }
 }
