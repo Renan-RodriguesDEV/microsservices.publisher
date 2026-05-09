@@ -1,7 +1,7 @@
 package com.micoservice.publisher.controllers;
-import com.micoservice.publisher.dto.PedidoDTO;
-import com.micoservice.publisher.model.Pedido;
-import com.micoservice.publisher.services.PedidoService;
+import com.micoservice.publisher.domain.dto.request.FraudAnalysisDTO;
+import com.micoservice.publisher.domain.model.FraudAnalysis;
+import com.micoservice.publisher.domain.services.FraudAnalysisService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,35 +9,35 @@ import java.util.List;
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
-    private final PedidoService pedidoService;
+    private final FraudAnalysisService fraudAnalysisService;
 
-    public PedidoController(PedidoService pedidoService) {
-        this.pedidoService = pedidoService;
+    public PedidoController(FraudAnalysisService fraudAnalysisService) {
+        this.fraudAnalysisService = fraudAnalysisService;
     }
 
     @GetMapping("/{id}")
-    public Pedido get(@PathVariable Long id) {
-        return pedidoService.findById(id);
+    public FraudAnalysis get(@PathVariable Long id) {
+        return fraudAnalysisService.findById(id);
     }
 
     @GetMapping
-    public List<Pedido> get() {
-        return pedidoService.findAll();
+    public List<FraudAnalysis> get() {
+        return fraudAnalysisService.findAll();
     }
 
     @PutMapping("/{id}")
-    public Pedido put(@PathVariable Long id, @RequestBody PedidoDTO pedido) {
-        return pedidoService.update(id, pedido);
+    public FraudAnalysis put(@PathVariable Long id, @RequestBody FraudAnalysisDTO pedido) {
+        return fraudAnalysisService.update(id, pedido);
     }
 
     @PostMapping
-    public Pedido post(@RequestBody PedidoDTO pedido) {
-        return pedidoService.create(pedido);
+    public FraudAnalysis post(@RequestBody FraudAnalysisDTO pedido) {
+        return fraudAnalysisService.create(pedido);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        pedidoService.deleteById(id);
+        fraudAnalysisService.deleteById(id);
     }
 }
 

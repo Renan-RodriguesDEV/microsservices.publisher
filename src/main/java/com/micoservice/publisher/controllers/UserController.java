@@ -2,41 +2,41 @@ package com.micoservice.publisher.controllers;
 
 import java.util.List;
 
-import com.micoservice.publisher.dto.ClienteDTO;
+import com.micoservice.publisher.domain.dto.request.UserDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import com.micoservice.publisher.model.Cliente;
-import com.micoservice.publisher.services.ClienteService;
+import com.micoservice.publisher.domain.model.User;
+import com.micoservice.publisher.domain.services.UserService;
 
 @RestController
-@RequestMapping("clientes")
-public class ClienteController {
-    private final ClienteService clienteService;
+@RequestMapping("users")
+public class UserController {
+    private final UserService userService;
     // objeto que permite enviar mensagens para o RabbitMQ
     private final RabbitTemplate rabbitTemplate;
     @Value("${broker.queue.processamento.name}")
     private String routingKey;
 
-    public ClienteController(ClienteService clienteService, RabbitTemplate rabbitTemplate) {
-        this.clienteService = clienteService;
+    public UserController(UserService userService, RabbitTemplate rabbitTemplate) {
+        this.userService = userService;
         this.rabbitTemplate = rabbitTemplate;
     }
 
     @GetMapping("{id}")
-    public Cliente get(@PathVariable Long id) {
-        return clienteService.findById(id);
+    public User get(@PathVariable Long id) {
+        return userService.findById(id);
     }
 
     @GetMapping
-    public List<Cliente> get() {
-        return clienteService.findAll();
+    public List<User> get() {
+        return userService.findAll();
     }
 
     @PostMapping
-    public Cliente post(@RequestBody ClienteDTO cliente) {
-        Cliente cliente_db = clienteService.create(cliente);
+    public User post(@RequestBody UserDTO cliente) {
+        User cliente_db = userService.create(cliente);
         // envia a mensagem para o RabbitMQ, o primeiro parâmetro é o nome da exchange,
         // o segundo é a routing key e o terceiro é a mensagem
         rabbitTemplate.convertAndSend("", routingKey, cliente.name());
@@ -45,12 +45,12 @@ public class ClienteController {
     }
 
     @PutMapping("{id}")
-    public Cliente put(@PathVariable Long id,@RequestBody ClienteDTO cliente) {
-        return clienteService.update(id, cliente);
+    public User put(@PathVariable Long id, @RequestBody UserDTO cliente) {
+        return userService.update(id, cliente);
     }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable Long id) {
-        clienteService.deleteById(id);
+        userService.deleteById(id);
     }
 }

@@ -1,6 +1,8 @@
 package com.micoservice.publisher.config;
 
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,5 +16,9 @@ public class RabbitMQConfig {
     @Bean
     public Queue queu() {
         return new Queue(queue, true);
+    }
+
+    MessageConverter messageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 }
