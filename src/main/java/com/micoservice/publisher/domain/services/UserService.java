@@ -2,6 +2,7 @@ package com.micoservice.publisher.domain.services;
 
 import java.util.List;
 
+import com.micoservice.exceptions.AlreadyExistsException;
 import com.micoservice.publisher.domain.dto.request.UserDTO;
 import com.micoservice.publisher.security.TokenService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,11 +19,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
-    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder,AuthenticationManager authenticationManager,TokenService tokenService) {
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager, TokenService tokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager=authenticationManager;
-        this.tokenService=tokenService;
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
     }
 
     public List<User> findAll() {
@@ -30,16 +33,19 @@ public class UserService {
     }
 
     public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(()->new RuntimeException("Erro ao buscar usuario"));
+        return userRepository.findById(id).orElseThrow(() -> new AlreadyExistsException("Erro ao buscar usuario"));
     }
-    public String login(UserDTO userDTO){
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDTO.username(),userDTO.password());
+
+    public String login(UserDTO userDTO) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                userDTO.username(), userDTO.password());
         authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         return tokenService.generateToken(userDTO.username());
     }
+
     public User create(UserDTO userDTO) {
-        if (userRepository.findByUsername(userDTO.username())!=null){
-            throw  new RuntimeException("Usuario já existe");
+        if (userRepository.findByUsername(userDTO.username()) != null) {
+            throw new AlreadyExistsException("Usuario já existe");
         }
         User user = userDTO.toEntity();
         return userRepository.save(user);

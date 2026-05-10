@@ -1,17 +1,29 @@
 package com.micoservice.publisher.controllers;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.micoservice.publisher.domain.dto.request.FraudAnalysisDTO;
 import com.micoservice.publisher.domain.model.FraudAnalysis;
 import com.micoservice.publisher.domain.services.FraudAnalysisService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import com.micoservice.publisher.messaging.RabbitMQProducer;
 
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
     private final FraudAnalysisService fraudAnalysisService;
+    private final RabbitMQProducer producer;
 
-    public PedidoController(FraudAnalysisService fraudAnalysisService) {
+    public PedidoController(FraudAnalysisService fraudAnalysisService, RabbitMQProducer producer) {
+        this.producer = producer;
         this.fraudAnalysisService = fraudAnalysisService;
     }
 
@@ -26,13 +38,14 @@ public class PedidoController {
     }
 
     @PutMapping("/{id}")
-    public FraudAnalysis put(@PathVariable Long id, @RequestBody FraudAnalysisDTO pedido) {
-        return fraudAnalysisService.update(id, pedido);
+    public FraudAnalysis put(@PathVariable Long id, @RequestBody FraudAnalysisDTO data) {
+        return fraudAnalysisService.update(id, data);
     }
 
     @PostMapping
-    public FraudAnalysis post(@RequestBody FraudAnalysisDTO pedido) {
-        return fraudAnalysisService.create(pedido);
+    public FraudAnalysis post(@RequestBody FraudAnalysisDTO data) {
+        producer.send(data);
+        return fraudAnalysisService.create(data);
     }
 
     @DeleteMapping("/{id}")
@@ -40,4 +53,3 @@ public class PedidoController {
         fraudAnalysisService.deleteById(id);
     }
 }
-
