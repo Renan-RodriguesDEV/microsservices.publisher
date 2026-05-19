@@ -17,12 +17,12 @@ import com.micoservice.publisher.domain.services.FraudAnalysisService;
 import com.micoservice.publisher.messaging.RabbitMQProducer;
 
 @RestController
-@RequestMapping("/pedidos")
-public class PedidoController {
+@RequestMapping("/fraudes")
+public class FraudAnalysisController {
     private final FraudAnalysisService fraudAnalysisService;
     private final RabbitMQProducer producer;
 
-    public PedidoController(FraudAnalysisService fraudAnalysisService, RabbitMQProducer producer) {
+    public FraudAnalysisController(FraudAnalysisService fraudAnalysisService, RabbitMQProducer producer) {
         this.producer = producer;
         this.fraudAnalysisService = fraudAnalysisService;
     }

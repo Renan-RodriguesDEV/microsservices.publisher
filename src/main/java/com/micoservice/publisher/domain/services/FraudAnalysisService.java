@@ -3,15 +3,19 @@ import com.micoservice.publisher.domain.dto.request.FraudAnalysisDTO;
 import com.micoservice.publisher.domain.model.FraudAnalysis;
 import com.micoservice.publisher.domain.repositories.FraudAnalysisRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class FraudAnalysisService {
     private final FraudAnalysisRepository fraudAnalysisRepository;
+    private final RestClient client;
 
-    public FraudAnalysisService(FraudAnalysisRepository fraudAnalysisRepository) {
+    public FraudAnalysisService(FraudAnalysisRepository fraudAnalysisRepository, RestClient client) {
         this.fraudAnalysisRepository = fraudAnalysisRepository;
+        this.client = client;
     }
 
     public FraudAnalysis findById(Long id) {
@@ -23,7 +27,9 @@ public class FraudAnalysisService {
     }
 
     public FraudAnalysis create(FraudAnalysisDTO fraudAnalysisDTO) {
-        return null;
+        // faz post pra um serviço mock
+        CompletableFuture.runAsync(()->client.post().uri("/send").retrieve().body(Object.class));
+        return fraudAnalysisRepository.save(fraudAnalysisDTO.toEntity());
     }
 
     public FraudAnalysis update(Long id, FraudAnalysisDTO fraudAnalysisDTO) {

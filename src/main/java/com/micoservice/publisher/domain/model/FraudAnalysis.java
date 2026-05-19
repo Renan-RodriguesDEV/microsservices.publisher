@@ -19,6 +19,11 @@ public class FraudAnalysis {
 
     }
 
+    public FraudAnalysis(Long tranferencyId, FraudType fraudType) {
+        this.tranferencyId = tranferencyId;
+        this.fraudType = fraudType;
+
+    }
 
     public Long getId() {
         return id;
